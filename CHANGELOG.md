@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/eyalm2000/tidal-debug-menu/compare/v1.0.0...v1.1.0) (2026-03-17)
+
+
+### Features
+
+* add support for unsigned publication in CI by skipping signing ([88a8ba8](https://github.com/eyalm2000/tidal-debug-menu/commit/88a8ba8c9292308356bde49b295e36c1cc0d1e2b))
+
 # 1.0.0 (2026-03-17)
 
 
