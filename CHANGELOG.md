@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/eyalm2000/tidal-debug-menu/compare/v1.1.0...v1.1.1) (2026-03-17)
+
+
+### Bug Fixes
+
+* prepare 1.1.1 test workflow release ([c3644a3](https://github.com/eyalm2000/tidal-debug-menu/commit/c3644a38dda313d138016284da8550309df16138))
+
 # [1.1.0](https://github.com/eyalm2000/tidal-debug-menu/compare/v1.0.0...v1.1.0) (2026-03-17)
 
 
