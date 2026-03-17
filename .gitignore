@@ -123,7 +123,24 @@ gradle-app.setting
 node_modules/
 
 # gradle properties, due to Github token
-./gradle.properties
+gradle.properties
 
 # Ignore IDEA files
 .idea/
+
+# Local Android/patching artifacts
+local.properties
+*.keystore
+*.idsig
+*.apkm
+
+# Temporary investigation and extraction outputs
+.tmp/
+tidal-patched-base-temporary-files/
+tidal_apkm_extracted/
+tmp_base_smali/
+tmp_rvp_inspect/
+manifest_tree.txt
+patched_manifest_tree.txt
+tmp_find_debug_activity.py
+

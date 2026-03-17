@@ -1,4 +1,4 @@
-rootProject.name = "revanced-patches-template"
+rootProject.name = "tidal-debug-menu"
 
 pluginManagement {
     repositories {

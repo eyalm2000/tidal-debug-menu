@@ -1,13 +1,32 @@
 group = "app.revanced"
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.release.set(17)
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.jvmTarget = "17"
+}
+
 patches {
     about {
-        name = "ReVanced Patches template"
-        description = "Patches template for ReVanced"
-        source = "git@github.com:revanced/revanced-patches-template.git"
-        author = "ReVanced"
-        contact = "contact@revanced.app"
-        website = "https://revanced.app"
+        name = "TIDAL Debug Menu Patches"
+        description = "ReVanced patches to enable TIDAL's debug menu"
+        source = "https://github.com/eyalm2000/tidal-debug-menu"
+        author = "eyalm"
+        contact = "https://github.com/eyalm2000/tidal-debug-menu/issues"
+        website = "https://github.com/eyalm2000/tidal-debug-menu"
         license = "GNU General Public License v3.0"
     }
 }
+
+
+
