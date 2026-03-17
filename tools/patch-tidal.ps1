@@ -20,6 +20,7 @@ if (-not (Test-Path -Path $ApkPath)) {
 
 if ([string]::IsNullOrWhiteSpace($PatchesBundlePath)) {
     $latestBundle = Get-ChildItem "patches/build/libs" -Filter "patches-*.rvp" |
+        Where-Object { $_.Name -notmatch "sources|javadoc" } |
         Sort-Object LastWriteTime -Descending |
         Select-Object -First 1
 
