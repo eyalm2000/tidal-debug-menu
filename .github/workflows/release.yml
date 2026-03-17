@@ -57,3 +57,32 @@ jobs:
         run: |
           rm -f patches/build/libs/patches-*.rvp patches/build/libs/patches-*.rvp.asc || true
           npm exec semantic-release
+
+      - name: Update patches-bundle.json
+        if: github.ref_name == 'main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="$(git describe --tags --abbrev=0)"
+          VERSION="${TAG#v}"
+          CREATED_AT="$(date -u +'%Y-%m-%dT%H:%M:%S')"
+
+          cat > patches-bundle.json <<EOF
+          {
+            "created_at": "${CREATED_AT}",
+            "description": "# TIDAL Debug Menu Patches\\n\\nLatest stable source for ReVanced Manager URL imports.",
+            "download_url": "https://github.com/${{ github.repository }}/releases/download/${TAG}/patches-${VERSION}.rvp",
+            "version": "${VERSION}"
+          }
+          EOF
+
+          if git diff --quiet -- patches-bundle.json; then
+            echo "patches-bundle.json is already up to date"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add patches-bundle.json
+          git commit -m "chore: update patches bundle for ${TAG} [skip ci]"
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" "HEAD:${{ github.ref_name }}"

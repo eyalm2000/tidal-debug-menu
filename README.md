@@ -9,10 +9,13 @@ ReVanced patches to enable TIDAL's debug menu. Tested with version 2.184.2.
 
 ## Patching with ReVanced Manager
 
-1. Download the latest `patches-*.rvp` from Releases.
-2. Download the lastest pre-release Manager.
-3. Import the `.rvp` file from the Patches tab.
-5. Enable patches:
+1. Download the latest pre-release Manager (v2 or later).
+2. Add this URL as a source in the Patches tab:
+
+   `https://raw.githubusercontent.com/eyalm2000/tidal-debug-menu/main/patches-bundle.json`
+
+3. Alternative: manually download the latest `patches-*.rvp` from Releases and import it.
+4. Enable patches:
    - `Unlock Debug Menu`
    - `Export Debug Activity`
-6. Patch and install.
+5. Patch and install.
