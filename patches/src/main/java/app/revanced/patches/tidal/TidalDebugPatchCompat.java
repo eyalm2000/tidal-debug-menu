@@ -13,6 +13,7 @@ import org.w3c.dom.NodeList;
 public final class TidalDebugPatchCompat {
     private static final String ANDROID_NS = "http://schemas.android.com/apk/res/android";
     private static final String DEBUG_ACTIVITY = "com.tidal.android.debugmenu.DebugMenuActivity";
+    private static final String[] TIDAL_PACKAGES = {"com.aspiro.tidal"};
 
     private TidalDebugPatchCompat() {
     }
@@ -74,6 +75,7 @@ public final class TidalDebugPatchCompat {
             @Override
             public Unit invoke(Object builder) {
                 try {
+                    enforceTidalCompatibility(builder);
                     attachApplyOrExecute(builder, action);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -83,6 +85,11 @@ public final class TidalDebugPatchCompat {
         };
 
         return patchFactory.invoke(null, name, description, true, builderBlock);
+    }
+
+    private static void enforceTidalCompatibility(Object builder) throws Exception {
+        Method compatibleWith = builder.getClass().getMethod("compatibleWith", String[].class);
+        compatibleWith.invoke(builder, (Object) TIDAL_PACKAGES);
     }
 
     private static Method findPatchFactory(Class<?> patchKtClass, String factoryName) {

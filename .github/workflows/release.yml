@@ -39,7 +39,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./gradlew clean :patches:apiDump
-          ./gradlew build
+          ./gradlew :patches:check
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -54,4 +54,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ORG_GRADLE_PROJECT_skipSigning: "true"
-        run: npm exec semantic-release
+        run: |
+          rm -f patches/build/libs/patches-*.rvp patches/build/libs/patches-*.rvp.asc || true
+          npm exec semantic-release
