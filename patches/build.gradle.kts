@@ -1,3 +1,5 @@
+import org.gradle.plugins.signing.Sign
+
 group = "app.revanced"
 
 java {
@@ -14,6 +16,15 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     kotlinOptions.jvmTarget = "17"
+}
+
+val skipSigning = providers.gradleProperty("skipSigning")
+    .map(String::toBoolean)
+    .orElse(false)
+
+tasks.withType<Sign>().configureEach {
+    // CI releases do not provide a GPG key, so allow unsigned publication explicitly.
+    onlyIf { !skipSigning.get() }
 }
 
 patches {
