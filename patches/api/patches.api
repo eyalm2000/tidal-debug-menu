@@ -8,4 +8,3 @@ public final class app/revanced/patches/tidal/TidalDebugPatchKt {
 	public static final fun getUnlockDebugMenuPatch ()Lapp/revanced/patcher/patch/Patch;
 }
 
-
