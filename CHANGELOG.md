@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/eyalm2000/tidal-debug-menu/compare/v1.1.1...v1.1.2) (2026-03-17)
+
+
+### Bug Fixes
+
+* add patch source manifest and keep docs/workflow in sync ([e52cd4e](https://github.com/eyalm2000/tidal-debug-menu/commit/e52cd4eb2f076ab843895d645d53f8fd9c5243b5))
+
 ## [1.1.1](https://github.com/eyalm2000/tidal-debug-menu/compare/v1.1.0...v1.1.1) (2026-03-17)
 
 
