@@ -21,7 +21,7 @@ The debug menu includes an internal feature flags page, which can be used to ena
     Enables the hidden debug menu in the app, at the bottom of the settings page.
    - **Export Debug Activity**  
    Ensures `com.tidal.android.debugmenu.DebugMenuActivity` is exported in `AndroidManifest.xml`. This allows launching the debug menu activity with a home screen shortcut (or directly via ADB). Optional, but recommended.
-9. Click Patch. If prompted, download the APK from APKMirror. Make sure to download the latest version.
+9. Click Patch. If prompted, download the APK from APKMirror. Make sure to download the latest version, **2.184.2 or later**.
 10. Wait for the patching process to finish. **This can take a few minutes.**  
      When finished, click "install" to install the patched APK.
 11. Open TIDAL, log in to your account, navigate to the settings page, and scroll to the bottom. You should see a new "Debug Menu" option.  
