@@ -6,7 +6,7 @@ The debug menu includes an internal feature flags page, which can be used to ena
 
 ## Patching with ReVanced Manager
 
-1. Uninstall any existing version of TIDAL. **This is required and will delete downloaded music.**
+1. Uninstall any existing version of TIDAL from your phone. **This is required and will delete downloaded music.**
 2. Download the latest ReVanced Manager from [here.](https://revanced.app/download)
 3. If you have never used ReVanced Manager before, follow the onboarding and grant the necessary permissions. When prompted to select an app, choose "Skip for now". 
 4. Go to the "Patches" tab and click the edit button at the bottom, then the "+" button. Choose "Enter URL".
