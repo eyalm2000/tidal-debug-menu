@@ -1,23 +1,30 @@
 # TIDAL Debug Menu Patches
 
-ReVanced patches to enable TIDAL's debug menu. Tested with version 2.184.2.
+ReVanced patches to enable TIDAL's debug menu.  
+The debug menu includes an internal feature flags page, which can be used to enable hidden features such as [the new player UI](assets/player.webp).
 
-- `Unlock Debug Menu`
-  - Forces the debug menu gate to enabled in `DebugFeatureInteractorDefault`.
-- `Export Debug Activity`
-  - Ensures `com.tidal.android.debugmenu.DebugMenuActivity` is exported in `AndroidManifest.xml`.
 
 ## Patching with ReVanced Manager
 
-1. Download the latest ReVanced Manager (v2 or later).
-2. Add this URL as a source in the Patches tab:
+1. Uninstall any existing version of TIDAL. **This is required and will delete downloaded music.**
+2. Download the latest ReVanced Manager from [here.](https://revanced.app/download)
+3. If you have never used ReVanced Manager before, follow the onboarding and grant the necessary permissions. When prompted to select an app, choose "Skip for now". 
+4. Go to the "Patches" tab and click the edit button at the bottom, then the "+" button. Choose "Enter URL".
+5. Add this URL:
 
    `https://raw.githubusercontent.com/eyalm2000/tidal-debug-menu/main/patches-bundle.json`
 
-3. Alternative: manually download the latest `patches-*.rvp` from Releases and import it.
-4. Enable patches:
-   - `Unlock Debug Menu`
-   - `Export Debug Activity`
-5. Patch and install.
+6. Alternative: manually download the latest `patches-*.rvp` from Releases and import it.
+7. It might take a moment to load the patches. When done, go back to the Apps tab, search for and select "com.aspiro.tidal".
+8. Click "Select Patches" and make sure the following patches are selected:
+   - **Unlock Debug Menu**  
+    Enables the hidden debug menu in the app, at the bottom of the settings page.
+   - **Export Debug Activity**  
+   Ensures `com.tidal.android.debugmenu.DebugMenuActivity` is exported in `AndroidManifest.xml`. This allows launching the debug menu activity with a home screen shortcut (or directly via ADB). Optional, but recommended.
+9. Click Patch. If prompted, download the APK from APKMirror. Make sure to download the latest version.
+10. Wait for the patching process to finish. **This can take a few minutes.**  
+     When finished, click "install" to install the patched APK.
+11. Open TIDAL, log in to your account, navigate to the settings page, and scroll to the bottom. You should see a new "Debug Menu" option.  
+12. Congratulations! You have successfully unlocked the debug menu.  
+   To use the new player UI, click the "Feature Flags" option, search for the "Player Market UI" toggle, and enable it.
 
-(To use the new player UI, enable the "Player Market UI" feature flag)
