@@ -38,8 +38,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./gradlew clean :patches:apiDump
-          ./gradlew :patches:check
+          for attempt in 1 2 3; do
+            echo "Gradle build attempt ${attempt}/3"
+            if ./gradlew clean :patches:apiDump && ./gradlew :patches:check; then
+              exit 0
+            fi
+
+            if [ "${attempt}" -lt 3 ]; then
+              echo "Gradle build failed. Retrying in 20 seconds..."
+              ./gradlew --stop || true
+              sleep 20
+            fi
+          done
+
+          echo "Gradle build failed after 3 attempts."
+          exit 1
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
