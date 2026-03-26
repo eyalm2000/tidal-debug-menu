@@ -73,7 +73,7 @@ jobs:
           npm exec semantic-release
 
       - name: Build and upload Morphe bundle assets
-        if: github.ref_name == 'main'
+        if: github.ref_name == 'main' || github.ref_name == 'dev'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ORG_GRADLE_PROJECT_skipSigning: "true"
