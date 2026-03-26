@@ -1,19 +1,15 @@
-package app.revanced.patches.tidal;
+package app.morphe.patches.tidal;
 
+import app.tidal.shared.TidalPatchCore;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.io.Closeable;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 @SuppressWarnings({"unused", "rawtypes", "unchecked"})
 public final class TidalDebugPatchCompat {
-    private static final String ANDROID_NS = "http://schemas.android.com/apk/res/android";
-    private static final String DEBUG_ACTIVITY = "com.tidal.android.debugmenu.DebugMenuActivity";
     private static final String[] TIDAL_PACKAGES = {"com.aspiro.tidal"};
+    private static final String INSTRUCTION_EXTENSIONS = "app.morphe.patcher.extensions.InstructionExtensions";
 
     private TidalDebugPatchCompat() {
     }
@@ -37,7 +33,7 @@ public final class TidalDebugPatchCompat {
     }
 
     private static Object createPatch() throws Exception {
-        Class<?> patchKtClass = Class.forName("app.revanced.patcher.patch.PatchKt");
+        Class<?> patchKtClass = Class.forName("app.morphe.patcher.patch.PatchKt");
         Method bytecodePatch = findPatchFactory(patchKtClass, "bytecodePatch");
 
         return createPatchWithApplyBlock(
@@ -47,14 +43,14 @@ public final class TidalDebugPatchCompat {
             new ContextAction() {
                 @Override
                 public void run(Object context) throws Exception {
-                    forceDebugMenuReturnTrue(context);
+                    forceDebugMenuReturnTrueMorphe(context);
                 }
             }
         );
     }
 
     private static Object createExportActivityPatch() throws Exception {
-        Class<?> patchKtClass = Class.forName("app.revanced.patcher.patch.PatchKt");
+        Class<?> patchKtClass = Class.forName("app.morphe.patcher.patch.PatchKt");
         Method resourcePatch = findPatchFactory(patchKtClass, "resourcePatch");
 
         return createPatchWithApplyBlock(
@@ -64,7 +60,7 @@ public final class TidalDebugPatchCompat {
             new ContextAction() {
                 @Override
                 public void run(Object context) throws Exception {
-                    ensureDebugActivityExported(context);
+                    TidalPatchCore.ensureDebugActivityExported(context);
                 }
             }
         );
@@ -137,75 +133,23 @@ public final class TidalDebugPatchCompat {
         applyOrExecute.invoke(builder, applyBlock);
     }
 
-    private static void ensureDebugActivityExported(Object context) throws Exception {
-        Method documentMethod = context.getClass().getMethod("document", String.class);
-        Object documentObject = documentMethod.invoke(context, "AndroidManifest.xml");
-        Document document = (Document) documentObject;
+    private static void forceDebugMenuReturnTrueMorphe(Object context) throws Exception {
+        Object targetClass = findTargetClassMorphe(context);
 
-        NodeList activities = document.getElementsByTagName("activity");
-        boolean found = false;
-
-        for (int index = 0; index < activities.getLength(); index++) {
-            Element activity = (Element) activities.item(index);
-            String activityName = activity.getAttributeNS(ANDROID_NS, "name");
-            if (activityName == null || activityName.isEmpty()) {
-                activityName = activity.getAttribute("android:name");
-            }
-            if (!DEBUG_ACTIVITY.equals(activityName)) continue;
-
-            activity.setAttributeNS(ANDROID_NS, "android:exported", "true");
-            found = true;
-            break;
-        }
-
-        if (documentObject instanceof Closeable closeable) {
-            closeable.close();
-        }
-
-        if (!found) {
-            throw new IllegalStateException("Could not locate " + DEBUG_ACTIVITY + " in AndroidManifest.xml.");
-        }
-    }
-
-    private static void forceDebugMenuReturnTrue(Object context) throws Exception {
-        Object classes = invokeNoArg(context, "getClasses");
-
-        Object targetClass = null;
-        for (Object classDef : (Iterable<?>) classes) {
-            String type = (String) invokeNoArg(classDef, "getType");
-            // Match the actual class, not generated inner classes like ...$isLoggingEnabledFlow$1.
-            if (type.endsWith("/DebugFeatureInteractorDefault;") && !type.contains("$")) {
-                targetClass = classDef;
-                break;
-            }
-        }
-        if (targetClass == null) {
-            // Fallback for potential packaging variations while still avoiding inner classes.
-            for (Object classDef : (Iterable<?>) classes) {
-                String type = (String) invokeNoArg(classDef, "getType");
-                if (type.contains("DebugFeatureInteractorDefault") && !type.contains("$")) {
-                    targetClass = classDef;
+        Method mutableClassDefBy = null;
+        for (Method method : context.getClass().getMethods()) {
+            if (method.getName().equals("mutableClassDefBy") && method.getParameterCount() == 1) {
+                if (method.getParameterTypes()[0].isAssignableFrom(targetClass.getClass())) {
+                    mutableClassDefBy = method;
                     break;
                 }
             }
         }
-        if (targetClass == null) {
-            throw new IllegalStateException("Could not locate DebugFeatureInteractorDefault class.");
+        if (mutableClassDefBy == null) {
+            throw new IllegalStateException("Could not locate mutableClassDefBy(ClassDef) method.");
         }
 
-        Method proxyMethod = null;
-        for (Method method : context.getClass().getMethods()) {
-            if (method.getName().equals("proxy") && method.getParameterCount() == 1) {
-                proxyMethod = method;
-                break;
-            }
-        }
-        if (proxyMethod == null) {
-            throw new IllegalStateException("Could not locate proxy(ClassDef) method.");
-        }
-
-        Object proxy = proxyMethod.invoke(context, targetClass);
-        Object mutableClass = invokeNoArg(proxy, "getMutableClass");
+        Object mutableClass = mutableClassDefBy.invoke(context, targetClass);
         Iterable<?> methods = (Iterable<?>) invokeNoArg(mutableClass, "getMethods");
 
         Object targetMethod = null;
@@ -220,9 +164,6 @@ public final class TidalDebugPatchCompat {
                 fallbackNoArgBooleanMethod = method;
             }
 
-            // Support both known signatures:
-            // - a()Z
-            // - a(Ljava/lang/String;)Z
             if (!"a".equals(name) || !"Z".equals(returnType)) continue;
             if (paramCount == 0) {
                 targetMethod = method;
@@ -240,7 +181,7 @@ public final class TidalDebugPatchCompat {
             throw new IllegalStateException("Could not locate a suitable boolean gate method in DebugFeatureInteractorDefault.");
         }
 
-        Class<?> instructionExtensionsClass = Class.forName("app.revanced.patcher.extensions.InstructionExtensions");
+        Class<?> instructionExtensionsClass = Class.forName(INSTRUCTION_EXTENSIONS);
         Object instructionExtensions = instructionExtensionsClass.getField("INSTANCE").get(null);
 
         Method addInstructions = null;
@@ -248,11 +189,16 @@ public final class TidalDebugPatchCompat {
             if (!method.getName().equals("addInstructions")) continue;
             if (method.getParameterCount() != 3) continue;
             if (!Modifier.isPublic(method.getModifiers())) continue;
+            Class<?>[] paramTypes = method.getParameterTypes();
+            if (paramTypes[1] != int.class) continue;
+            if (paramTypes[2] != String.class) continue;
+            if (!paramTypes[0].isInstance(targetMethod)) continue;
             addInstructions = method;
             break;
         }
+
         if (addInstructions == null) {
-            throw new IllegalStateException("Could not locate InstructionExtensions.addInstructions.");
+            throw new IllegalStateException("Could not locate InstructionExtensions.addInstructions for MutableMethod.");
         }
 
         addInstructions.invoke(
@@ -261,6 +207,51 @@ public final class TidalDebugPatchCompat {
             0,
             "const/4 v0, 0x1\nreturn v0"
         );
+    }
+
+    private static Object findTargetClassMorphe(Object context) throws Exception {
+        Method classDefByOrNullString = null;
+        Method classDefForEach = null;
+        for (Method method : context.getClass().getMethods()) {
+            if (method.getName().equals("classDefByOrNull") && method.getParameterCount() == 1 && method.getParameterTypes()[0] == String.class) {
+                classDefByOrNullString = method;
+            }
+            if (method.getName().equals("classDefForEach") && method.getParameterCount() == 1) {
+                classDefForEach = method;
+            }
+        }
+
+        if (classDefByOrNullString != null) {
+            Object target = classDefByOrNullString.invoke(context, "Lcom/tidal/android/features/debugmenu/debugfeatureinteractor/DebugFeatureInteractorDefault;");
+            if (target != null) {
+                return target;
+            }
+        }
+
+        if (classDefForEach != null) {
+            final Object[] targetHolder = new Object[1];
+            Function1<Object, Unit> visitor = new Function1<>() {
+                @Override
+                public Unit invoke(Object classDef) {
+                    if (targetHolder[0] != null) return Unit.INSTANCE;
+                    try {
+                        String type = (String) invokeNoArg(classDef, "getType");
+                        if (type.contains("DebugFeatureInteractorDefault") && !type.contains("$")) {
+                            targetHolder[0] = classDef;
+                        }
+                    } catch (Exception ignored) {
+                    }
+                    return Unit.INSTANCE;
+                }
+            };
+            classDefForEach.invoke(context, visitor);
+
+            if (targetHolder[0] != null) {
+                return targetHolder[0];
+            }
+        }
+
+        throw new IllegalStateException("Could not locate DebugFeatureInteractorDefault class.");
     }
 
     private static Object invokeNoArg(Object target, String methodName) throws Exception {

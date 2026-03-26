@@ -23,7 +23,6 @@ val skipSigning = providers.gradleProperty("skipSigning")
     .orElse(false)
 
 tasks.withType<Sign>().configureEach {
-    // CI releases do not provide a GPG key, so allow unsigned publication explicitly.
     onlyIf { !skipSigning.get() }
 }
 
@@ -39,5 +38,12 @@ patches {
     }
 }
 
+dependencies {
+    implementation(project(":shared-core"))
+}
 
-
+sourceSets {
+    main {
+        java.srcDir("../shared-core/src/main/java")
+    }
+}
