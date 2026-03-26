@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/eyalm2000/tidal-debug-menu/compare/v1.1.2...v1.2.0) (2026-03-26)
+
+
+### Features
+
+* add dual ReVanced/Morphe patch pipeline and manager JSON sources (refs [#1](https://github.com/eyalm2000/tidal-debug-menu/issues/1)) ([b7fb358](https://github.com/eyalm2000/tidal-debug-menu/commit/b7fb3580b18e9a4640d98917b0a0903c6760819d))
+
 # [1.2.0-dev.1](https://github.com/eyalm2000/tidal-debug-menu/compare/v1.1.2...v1.2.0-dev.1) (2026-03-26)
 
 
