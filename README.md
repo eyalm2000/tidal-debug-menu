@@ -3,44 +3,6 @@
 ReVanced and Morphe patches to enable TIDAL's debug menu.  
 The debug menu includes an internal feature flags page, which can be used to enable hidden features such as [the new player UI](assets/player.webp).
 
-This repository now supports building patch bundles for both ReVanced and Morphe from the same codebase.
-
-## Repository Structure
-
-- `shared-core/`: shared implementation used by both patch targets.
-- `revanced-patches/`: ReVanced patch module.
-- `morphe-patches/`: Morphe patch module.
-
-The Gradle `:patches` project is mapped to either `revanced-patches/` (default) or `morphe-patches/` (`-Pmorphe=true`).
-
-## Building Locally
-
-### ReVanced build
-
-```powershell
-.\gradlew.bat clean :patches:buildAndroid
-```
-
-The resulting bundle is written to `patches/build/libs/patches-<version>.rvp`.
-
-### Morphe build
-
-Morphe plugin artifacts are resolved from GitHub Packages and require credentials.
-
-Set either:
-
-1. `gpr.user` and `gpr.key` in your Gradle properties, or
-2. `GITHUB_ACTOR` and `GITHUB_TOKEN` environment variables.
-
-Then run:
-
-```powershell
-.\gradlew.bat clean :patches:buildAndroid -Pmorphe=true
-```
-
-If credentials are missing, the build fails fast with an explicit setup error.
-
-
 ## Patching with ReVanced Manager
 
 1. Uninstall any existing version of TIDAL from your phone. **This is required and will delete downloaded music.**
