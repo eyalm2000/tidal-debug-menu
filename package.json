@@ -6,7 +6,7 @@
     "@semantic-release/github": "^11.0.4",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/release-notes-generator": "^14.1.0",
-    "gradle-semantic-release-plugin": "^1.10.1",
+    "gradle-semantic-release-plugin": "^1.10.3",
     "semantic-release": "^24.1.2"
   }
 }
